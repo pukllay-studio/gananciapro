@@ -270,6 +270,7 @@
         "¡Suscripción activa! Gracias por confiar en GananciaPro.": "Subscription active! Thank you for trusting GananciaPro.",
         "Recibimos tu pago, pero la activación está tardando. Recarga la página en un minuto; si sigue igual, escríbenos.": "We received your payment, but activation is taking a while. Reload the page in a minute; if it persists, contact us.",
         "El precio mensual se anunciará al activar los pagos.": "The monthly price will be announced when payments are enabled.",
+        "US$ 9 al mes. Cancela cuando quieras.": "US$ 9 per month. Cancel anytime.",
         "Marca la casilla para continuar.": "Tick the box to continue.",
         "Debes aceptar la Política de privacidad y los Términos de uso.": "You must accept the Privacy Policy and the Terms of Use.",
         "La contraseña debe combinar letras y números.": "The password must combine letters and numbers.", "Las contraseñas no coinciden.": "The passwords do not match.",

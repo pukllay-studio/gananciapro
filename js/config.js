@@ -17,7 +17,7 @@ window.GANANCIAPRO_CONFIG = Object.freeze({
 
     /* Cobros: se completan cuando el proveedor de pagos esté configurado.
        Deja CHECKOUT_URL vacío y el botón "Suscribirme" aparece como "Próximamente". */
-    PRECIO_TEXTO: "",
+    PRECIO_TEXTO: "US$ 9 al mes. Cancela cuando quieras.",
     CHECKOUT_URL: "",
 
     /* Pon true cuando la función crear-pago y Polar estén listos: el botón "Suscribirme" abre el pago */
