@@ -470,7 +470,7 @@
     function titulo() {
         if (tituloEs === null) tituloEs = document.title;
         if (idioma === "en") {
-            document.title = (tituloEs === "GananciaPro | Ingresos, gastos y almacén" ? "GananciaPro | Income, expenses and inventory" : tituloEs);
+            document.title = (tituloEs === "GananciaPro | Control de ingresos, gastos e inventario para tu negocio" ? "GananciaPro | Income, expense and inventory control for your business" : tituloEs);
         } else document.title = tituloEs;
         const meta = document.querySelector('meta[name="description"]');
         if (meta) {
