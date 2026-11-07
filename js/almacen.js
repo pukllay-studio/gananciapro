@@ -632,13 +632,32 @@
         precio.setAttribute("aria-label", "Precio por unidad");
 
         cantidad.className = "venta-cant";
-        select.addEventListener("change", recalcularTotalVenta);
+        select.addEventListener("change", () => {
+            const guardado = precioGuardado(select.value);
+            if (guardado && !precio.value) precio.value = guardado;
+            recalcularTotalVenta();
+        });
         cantidad.addEventListener("input", recalcularTotalVenta);
         precio.addEventListener("input", recalcularTotalVenta);
         quitar.addEventListener("click", recalcularTotalVenta);
 
         fila.append(select, cantidad, precio, quitar);
         $("ventaLineas").appendChild(fila);
+    }
+
+    /* Último precio usado por producto (solo en este equipo) */
+    function precioGuardado(idProducto) {
+        try { return Number(localStorage.getItem(`gp_precio_${idProducto}`)) || ""; } catch (e) { return ""; }
+    }
+
+    function recordarPrecios() {
+        for (const fila of $("ventaLineas").children) {
+            const idp = fila.querySelector("select").value;
+            const pr = Number(fila.querySelector(".venta-precio")?.value);
+            if (idp && pr > 0 && pr < 100000000) {
+                try { localStorage.setItem(`gp_precio_${idp}`, String(pr)); } catch (e) { /* sin almacenamiento */ }
+            }
+        }
     }
 
     /* Total = suma de (cantidad × precio por unidad) de cada línea */
@@ -728,6 +747,7 @@
                 $("ventaDescripcion").value.trim() || "Venta de almacén"
             );
 
+            recordarPrecios();
             productos = await Nube.listarProductos();
             $("dlgVenta").close();
             pintar();
