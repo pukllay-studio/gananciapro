@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gananciapro.app/sitemap.xml
