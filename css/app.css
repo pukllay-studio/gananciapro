@@ -8,11 +8,11 @@
 body:not([data-sesion="no"]) {
     --font: "Schibsted Grotesk", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     --font-display: var(--font);
-    --bg: #e6efe9;
+    --bg: #eef1f5;
     --surface: #ffffff;
-    --surface-2: #edf3ef;
-    --texto: #08140d;
-    --texto-suave: #3b4a41;
+    --surface-2: #f4f6f9;
+    --texto: #0b1220;
+    --texto-suave: #44505f;
     --borde: transparent;
     --borde-fuerte: #c9c9c9;
     --acento: #1f6b3a;
@@ -31,7 +31,7 @@ body:not([data-sesion="no"]) {
     --sombra-sm: none;
     --sombra: none;
     --sombra-lg: none;
-    --cab-fondo: #e6efe9;
+    --cab-fondo: #eef1f5;
     --cab-texto: #08140d;
     --cab-suave: #3b4a41;
     --cab-borde: transparent;

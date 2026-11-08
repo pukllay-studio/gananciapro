@@ -3731,3 +3731,13 @@ button.miniatura:focus-visible {
 .gp-menu-idioma button:focus-visible { background: rgba(26, 138, 90, 0.12); outline: none; }
 .gp-menu-idioma button[aria-checked="true"] { font-weight: 700; }
 .gp-menu-idioma button[aria-checked="true"]::after { content: "  ✓"; color: #1a8a5a; }
+
+/* Chino: sin cortar palabras ni apretar los trazos */
+html[lang="zh"] body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", var(--font), sans-serif; }
+html[lang="zh"] h1, html[lang="zh"] h2, html[lang="zh"] h3 {
+    letter-spacing: 0 !important;
+    line-break: strict;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+}
+html[lang="zh"] h1 { font-size: clamp(2.2rem, 6vw, 4rem) !important; line-height: 1.2 !important; }

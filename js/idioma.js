@@ -1,21 +1,22 @@
 "use strict";
 
-/* Idioma de GananciaPro (español / inglés / portugués).
+/* Idioma de GananciaPro (es, en, pt, fr, zh).
    - Se guarda en su propia clave (gananciapro_idioma); NO toca los datos.
    - Traduce el texto de la página y los mensajes que genera la app.
    - Lo que no esté en el diccionario se queda en español (nunca se rompe nada).
    - Los datos del usuario (nombres de productos, descripciones…) no se traducen. */
 (function () {
+    const VALIDOS = ["es", "en", "pt", "fr", "zh"];
     const CLAVE = "gananciapro_idioma";
     const raiz = document.documentElement;
 
     function leerGuardado() {
         try {
             const v = localStorage.getItem(CLAVE);
-            if (v === "es" || v === "en" || v === "pt") return v;
+            if (VALIDOS.includes(v)) return v;
         } catch (e) { /* sin almacenamiento */ }
         const nav = (navigator.language || "es").toLowerCase();
-        return nav.startsWith("es") ? "es" : nav.startsWith("pt") ? "pt" : "en";
+        return nav.startsWith("es") ? "es" : nav.startsWith("pt") ? "pt" : nav.startsWith("fr") ? "fr" : nav.startsWith("zh") ? "zh" : "en";
     }
 
     let idioma = leerGuardado();
@@ -367,8 +368,9 @@
     /* ---------- Motor de traducción ---------- */
     function normal(s) { return s.replace(/\s+/g, " ").trim(); }
 
-    const dic = () => (idioma === "pt" && window.GP_PT ? window.GP_PT.D : D);
-    const reglas = () => (idioma === "pt" && window.GP_PT ? window.GP_PT.R : R);
+    const paquete = () => (idioma === "pt" ? window.GP_PT : (window.GP_LANGS || {})[idioma]) || null;
+    const dic = () => (paquete() ? paquete().D : D);
+    const reglas = () => (paquete() ? paquete().R : R);
 
     function traducir(texto) {
         const t = normal(texto);
@@ -483,6 +485,10 @@
         const TITULO_ES = "GananciaPro | Control de ingresos, gastos e inventario para tu negocio";
         if (idioma === "en") {
             document.title = (tituloEs === TITULO_ES ? "GananciaPro | Income, expense and inventory control for your business" : tituloEs);
+        } else if (idioma === "zh") {
+            document.title = (tituloEs === TITULO_ES ? "GananciaPro | 为你的生意管理收入、支出和库存" : tituloEs);
+        } else if (idioma === "fr") {
+            document.title = (tituloEs === TITULO_ES ? "GananciaPro | Suivi des revenus, dépenses et stock pour votre entreprise" : tituloEs);
         } else if (idioma === "pt") {
             document.title = (tituloEs === TITULO_ES ? "GananciaPro | Controle de receitas, despesas e estoque para o seu negócio" : tituloEs);
         } else document.title = tituloEs;
@@ -491,7 +497,11 @@
             if (!meta.dataset.es) meta.dataset.es = meta.content;
             meta.content = idioma === "en"
                 ? "GananciaPro: manage your income, expenses and warehouse in one place. 14-day free trial, no card needed."
-                : idioma === "pt"
+                : idioma === "zh"
+                    ? "GananciaPro：在一个地方管理你的收入、支出和库存。免费试用14天，无需银行卡。"
+                    : idioma === "fr"
+                    ? "GananciaPro : gérez vos revenus, dépenses et stock au même endroit. Essai gratuit de 14 jours, sans carte."
+                    : idioma === "pt"
                     ? "GananciaPro: controle suas receitas, despesas e estoque em um só lugar. Teste grátis por 14 dias, sem cartão."
                     : meta.dataset.es;
         }
@@ -532,8 +542,8 @@
     window.alert = (m) => alertaOriginal(idioma !== "es" ? traducirTextoLargo(String(m)) : m);
 
     /* ---------- Botón de idioma: abre un menú con los tres idiomas ---------- */
-    const IDIOMAS = [["es", "Español"], ["en", "English"], ["pt", "Português"]];
-    const AYUDA = { es: "Idioma: Español. Cambiar idioma", en: "Language: English. Change language", pt: "Idioma: Português. Mudar idioma" };
+    const IDIOMAS = [["es", "Español"], ["en", "English"], ["pt", "Português"], ["fr", "Français"], ["zh", "中文"]];
+    const AYUDA = { fr: "Langue : Français. Changer de langue", zh: "语言：中文。切换语言", es: "Idioma: Español. Cambiar idioma", en: "Language: English. Change language", pt: "Idioma: Português. Mudar idioma" };
     let botones = [];
     let menu = null;
     let origen = null;
@@ -608,7 +618,7 @@
     }
 
     function cambiar(nuevo) {
-        if (nuevo !== "es" && nuevo !== "en" && nuevo !== "pt") return;
+        if (!VALIDOS.includes(nuevo)) return;
         idioma = nuevo;
         try { localStorage.setItem(CLAVE, nuevo); } catch (e) { /* sin almacenamiento */ }
         aplicarTodo();
@@ -627,7 +637,7 @@
 
     window.GP_IDIOMA = {
         actual: () => idioma,
-        locale: () => (idioma === "en" ? "en-US" : idioma === "pt" ? "pt-BR" : "es-PE"),
+        locale: () => (idioma === "en" ? "en-US" : idioma === "pt" ? "pt-BR" : idioma === "fr" ? "fr-FR" : idioma === "zh" ? "zh-CN" : "es-PE"),
         cambiar,
         traducir: (t) => (idioma !== "es" ? (traducir(t) || t) : t)
     };

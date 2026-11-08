@@ -231,12 +231,22 @@
         "Papelaria", "Eletrônicos", "Alimentos", "Bebidas", "Limpeza", "Ferramentas", "Peças"
     ];
 
+    const CATEGORIAS_SUGERIDAS_FR = [
+        "Vêtements", "Sous-vêtements", "Chaussures", "Souliers", "Accessoires", "Sacs", "Bijoux", "Beauté", "Maison", "Jouets",
+        "Papeterie", "Électronique", "Alimentation", "Boissons", "Nettoyage", "Outils", "Pièces détachées"
+    ];
+
+    const CATEGORIAS_SUGERIDAS_ZH = [
+        "服装", "内衣", "鞋类", "皮鞋", "配饰", "包", "珠宝", "美妆", "家居", "玩具",
+        "文具", "电子产品", "食品", "饮料", "清洁用品", "工具", "零配件"
+    ];
+
     function pintarChipsCategoria() {
         const cont = $("chipsCategoria");
         const nombres = categorias.map((c) => c.nombre);
         const sugeridas = (() => {
             const l = window.GP_IDIOMA ? window.GP_IDIOMA.actual() : "es";
-            return l === "en" ? CATEGORIAS_SUGERIDAS_EN : l === "pt" ? CATEGORIAS_SUGERIDAS_PT : CATEGORIAS_SUGERIDAS;
+            return l === "en" ? CATEGORIAS_SUGERIDAS_EN : l === "pt" ? CATEGORIAS_SUGERIDAS_PT : l === "fr" ? CATEGORIAS_SUGERIDAS_FR : l === "zh" ? CATEGORIAS_SUGERIDAS_ZH : CATEGORIAS_SUGERIDAS;
         })();
         for (const sugerida of sugeridas) {
             if (!nombres.some((n) => sinTildes(n).trim() === sinTildes(sugerida))) nombres.push(sugerida);
