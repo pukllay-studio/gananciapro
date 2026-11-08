@@ -116,4 +116,17 @@
         });
     }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
     document.querySelectorAll("[data-aparece]").forEach((el) => observador.observe(el));
+
+    /* ---------- Tarjeta de acceso: se "enciende" al llegar a ella (una sola vez) ---------- */
+    const tarjeta = document.querySelector("body[data-sesion=\"no\"] .acceso-tarjeta");
+    if (tarjeta) {
+        tarjeta.classList.add("lista");
+        const luz = new IntersectionObserver((entradas) => {
+            if (entradas.some((e) => e.isIntersecting)) {
+                tarjeta.classList.add("enciende");
+                luz.disconnect();
+            }
+        }, { threshold: 0.25 });
+        luz.observe(tarjeta);
+    }
 })();
