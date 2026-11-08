@@ -3698,3 +3698,36 @@ button.miniatura:focus-visible {
     .reporte-impresion .rep-total { font-weight: 700; }
     .reporte-impresion tr { break-inside: avoid; }
 }
+
+/* Menú de idioma */
+.gp-menu-idioma {
+    position: fixed;
+    z-index: 1000;
+    min-width: 168px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--surface, #fff);
+    color: var(--texto, #1a2a22);
+    border: 1px solid var(--borde, rgba(0, 0, 0, 0.14));
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+.gp-menu-idioma[hidden] { display: none; }
+.gp-menu-idioma button {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 1rem;
+    text-align: left;
+    cursor: pointer;
+}
+.gp-menu-idioma button:hover,
+.gp-menu-idioma button:focus-visible { background: rgba(26, 138, 90, 0.12); outline: none; }
+.gp-menu-idioma button[aria-checked="true"] { font-weight: 700; }
+.gp-menu-idioma button[aria-checked="true"]::after { content: "  ✓"; color: #1a8a5a; }

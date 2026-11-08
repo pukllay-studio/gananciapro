@@ -226,10 +226,18 @@
         "Stationery", "Electronics", "Food", "Drinks", "Cleaning", "Tools", "Spare parts"
     ];
 
+    const CATEGORIAS_SUGERIDAS_PT = [
+        "Roupas", "Roupa íntima", "Calçados", "Sapatos", "Acessórios", "Bolsas", "Joias", "Beleza", "Casa", "Brinquedos",
+        "Papelaria", "Eletrônicos", "Alimentos", "Bebidas", "Limpeza", "Ferramentas", "Peças"
+    ];
+
     function pintarChipsCategoria() {
         const cont = $("chipsCategoria");
         const nombres = categorias.map((c) => c.nombre);
-        const sugeridas = window.GP_IDIOMA && window.GP_IDIOMA.actual() === "en" ? CATEGORIAS_SUGERIDAS_EN : CATEGORIAS_SUGERIDAS;
+        const sugeridas = (() => {
+            const l = window.GP_IDIOMA ? window.GP_IDIOMA.actual() : "es";
+            return l === "en" ? CATEGORIAS_SUGERIDAS_EN : l === "pt" ? CATEGORIAS_SUGERIDAS_PT : CATEGORIAS_SUGERIDAS;
+        })();
         for (const sugerida of sugeridas) {
             if (!nombres.some((n) => sinTildes(n).trim() === sinTildes(sugerida))) nombres.push(sugerida);
         }

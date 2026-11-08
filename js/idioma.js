@@ -1,6 +1,6 @@
 "use strict";
 
-/* Idioma de GananciaPro (español / inglés).
+/* Idioma de GananciaPro (español / inglés / portugués).
    - Se guarda en su propia clave (gananciapro_idioma); NO toca los datos.
    - Traduce el texto de la página y los mensajes que genera la app.
    - Lo que no esté en el diccionario se queda en español (nunca se rompe nada).
@@ -12,10 +12,10 @@
     function leerGuardado() {
         try {
             const v = localStorage.getItem(CLAVE);
-            if (v === "es" || v === "en") return v;
+            if (v === "es" || v === "en" || v === "pt") return v;
         } catch (e) { /* sin almacenamiento */ }
         const nav = (navigator.language || "es").toLowerCase();
-        return nav.startsWith("es") ? "es" : "en";
+        return nav.startsWith("es") ? "es" : nav.startsWith("pt") ? "pt" : "en";
     }
 
     let idioma = leerGuardado();
@@ -367,11 +367,15 @@
     /* ---------- Motor de traducción ---------- */
     function normal(s) { return s.replace(/\s+/g, " ").trim(); }
 
+    const dic = () => (idioma === "pt" && window.GP_PT ? window.GP_PT.D : D);
+    const reglas = () => (idioma === "pt" && window.GP_PT ? window.GP_PT.R : R);
+
     function traducir(texto) {
         const t = normal(texto);
         if (!t) return null;
-        if (Object.prototype.hasOwnProperty.call(D, t)) return D[t];
-        for (const regla of R) {
+        const DD = dic();
+        if (Object.prototype.hasOwnProperty.call(DD, t)) return DD[t];
+        for (const regla of reglas()) {
             const [re, fn, global] = regla;
             if (global) {
                 if (re.test(t)) { re.lastIndex = 0; return t.replace(re, fn); }
@@ -386,7 +390,7 @@
         // "Prefijo: resto"
         const i = t.indexOf(": ");
         if (i > 3) {
-            const a = D[t.slice(0, i)];
+            const a = DD[t.slice(0, i)];
             if (a) return a + ": " + (traducir(t.slice(i + 2)) || t.slice(i + 2));
         }
         // Varias frases o líneas
@@ -405,8 +409,8 @@
 
     /* ---------- Aplicar al documento ---------- */
     const ATRIBUTOS = ["placeholder", "aria-label", "title", "alt", "data-precio"];
-    const textos = new WeakMap();   // nodo de texto -> { es, en }
-    const attrs = new WeakMap();    // elemento -> { atributo: { es, en } }
+    const textos = new WeakMap();   // nodo de texto -> { es, tr }  (tr = texto traducido actual)
+    const attrs = new WeakMap();    // elemento -> { atributo: { es, tr } }
     let aplicando = false;
 
     function conEspacios(original, nuevo) {
@@ -422,15 +426,19 @@
         const reg = textos.get(nodo);
 
         if (idioma === "es") {
-            if (reg && valor === reg.en) nodo.nodeValue = reg.es;
+            if (reg && valor === reg.tr) nodo.nodeValue = reg.es;
             return;
         }
-        if (reg && valor === reg.en) return;
-        const en = traducir(valor);
-        if (en && en !== normal(valor)) {
-            const nuevo = conEspacios(valor, en);
-            textos.set(nodo, { es: valor, en: nuevo });
+        const base = reg && valor === reg.tr ? reg.es : valor;
+        if (reg && valor === reg.tr && reg.lang === idioma) return;
+        const tr = traducir(base);
+        if (tr && tr !== normal(base)) {
+            const nuevo = conEspacios(base, tr);
+            textos.set(nodo, { es: base, tr: nuevo, lang: idioma });
             nodo.nodeValue = nuevo;
+        } else if (reg && valor === reg.tr) {
+            nodo.nodeValue = reg.es;
+            textos.delete(nodo);
         }
     }
 
@@ -441,15 +449,18 @@
             const mapa = attrs.get(el) || {};
             const reg = mapa[a];
             if (idioma === "es") {
-                if (reg && valor === reg.en) el.setAttribute(a, reg.es);
+                if (reg && valor === reg.tr) el.setAttribute(a, reg.es);
                 continue;
             }
-            if (reg && valor === reg.en) continue;
-            const en = traducir(valor);
-            if (en && en !== valor) {
-                mapa[a] = { es: valor, en };
+            const base = reg && valor === reg.tr ? reg.es : valor;
+            if (reg && valor === reg.tr && reg.lang === idioma) continue;
+            const tr = traducir(base);
+            if (tr && tr !== base) {
+                mapa[a] = { es: base, tr, lang: idioma };
                 attrs.set(el, mapa);
-                el.setAttribute(a, en);
+                el.setAttribute(a, tr);
+            } else if (reg && valor === reg.tr) {
+                el.setAttribute(a, reg.es);
             }
         }
     }
@@ -469,15 +480,20 @@
     let tituloEs = null;
     function titulo() {
         if (tituloEs === null) tituloEs = document.title;
+        const TITULO_ES = "GananciaPro | Control de ingresos, gastos e inventario para tu negocio";
         if (idioma === "en") {
-            document.title = (tituloEs === "GananciaPro | Control de ingresos, gastos e inventario para tu negocio" ? "GananciaPro | Income, expense and inventory control for your business" : tituloEs);
+            document.title = (tituloEs === TITULO_ES ? "GananciaPro | Income, expense and inventory control for your business" : tituloEs);
+        } else if (idioma === "pt") {
+            document.title = (tituloEs === TITULO_ES ? "GananciaPro | Controle de receitas, despesas e estoque para o seu negócio" : tituloEs);
         } else document.title = tituloEs;
         const meta = document.querySelector('meta[name="description"]');
         if (meta) {
             if (!meta.dataset.es) meta.dataset.es = meta.content;
             meta.content = idioma === "en"
                 ? "GananciaPro: manage your income, expenses and warehouse in one place. 14-day free trial, no card needed."
-                : meta.dataset.es;
+                : idioma === "pt"
+                    ? "GananciaPro: controle suas receitas, despesas e estoque em um só lugar. Teste grátis por 14 dias, sem cartão."
+                    : meta.dataset.es;
         }
     }
 
@@ -511,22 +527,88 @@
     const confirmarOriginal = window.confirm.bind(window);
     const promptOriginal = window.prompt.bind(window);
     const alertaOriginal = window.alert.bind(window);
-    window.confirm = (m) => confirmarOriginal(idioma === "en" ? traducirTextoLargo(String(m)) : m);
-    window.prompt = (m, d) => promptOriginal(idioma === "en" ? traducirTextoLargo(String(m)) : m, d);
-    window.alert = (m) => alertaOriginal(idioma === "en" ? traducirTextoLargo(String(m)) : m);
+    window.confirm = (m) => confirmarOriginal(idioma !== "es" ? traducirTextoLargo(String(m)) : m);
+    window.prompt = (m, d) => promptOriginal(idioma !== "es" ? traducirTextoLargo(String(m)) : m, d);
+    window.alert = (m) => alertaOriginal(idioma !== "es" ? traducirTextoLargo(String(m)) : m);
 
-    /* ---------- Botón de idioma ---------- */
+    /* ---------- Botón de idioma: abre un menú con los tres idiomas ---------- */
+    const IDIOMAS = [["es", "Español"], ["en", "English"], ["pt", "Português"]];
+    const AYUDA = { es: "Idioma: Español. Cambiar idioma", en: "Language: English. Change language", pt: "Idioma: Português. Mudar idioma" };
     let botones = [];
+    let menu = null;
+    let origen = null;
+
     function actualizarBoton() {
         for (const b of botones) {
-            b.textContent = idioma === "es" ? "EN" : "ES";
-            b.setAttribute("aria-label", idioma === "es" ? "Change language to English" : "Cambiar idioma a español");
-            b.title = idioma === "es" ? "English" : "Español";
+            b.textContent = idioma.toUpperCase();
+            b.setAttribute("aria-label", AYUDA[idioma]);
+            b.setAttribute("aria-haspopup", "menu");
+            b.setAttribute("aria-expanded", menu && !menu.hidden && origen === b ? "true" : "false");
+            b.title = AYUDA[idioma];
+        }
+        if (menu) {
+            for (const it of menu.querySelectorAll("[data-lang]")) it.setAttribute("aria-checked", it.dataset.lang === idioma ? "true" : "false");
         }
     }
 
+    function cerrarMenu(devolverFoco) {
+        if (!menu || menu.hidden) return;
+        menu.hidden = true;
+        const o = origen;
+        origen = null;
+        actualizarBoton();
+        if (devolverFoco && o) o.focus();
+    }
+
+    function crearMenu() {
+        menu = document.createElement("div");
+        menu.className = "gp-menu-idioma";
+        menu.setAttribute("role", "menu");
+        menu.setAttribute("data-no-traducir", "");
+        menu.hidden = true;
+        for (const [codigo, nombre] of IDIOMAS) {
+            const it = document.createElement("button");
+            it.type = "button";
+            it.setAttribute("role", "menuitemradio");
+            it.dataset.lang = codigo;
+            it.lang = codigo;
+            it.textContent = nombre;
+            it.addEventListener("click", () => { cerrarMenu(true); cambiar(codigo); });
+            menu.appendChild(it);
+        }
+        menu.addEventListener("keydown", (e) => {
+            const items = [...menu.querySelectorAll("[data-lang]")];
+            const i = items.indexOf(document.activeElement);
+            if (e.key === "Escape") { e.preventDefault(); cerrarMenu(true); }
+            else if (e.key === "ArrowDown") { e.preventDefault(); items[(i + 1) % items.length].focus(); }
+            else if (e.key === "ArrowUp") { e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+            else if (e.key === "Tab") cerrarMenu(false);
+        });
+        document.body.appendChild(menu);
+        document.addEventListener("click", (e) => {
+            if (menu.hidden) return;
+            if (menu.contains(e.target) || (origen && origen.contains(e.target))) return;
+            cerrarMenu(false);
+        });
+        window.addEventListener("resize", () => cerrarMenu(false));
+        window.addEventListener("scroll", () => cerrarMenu(false), { passive: true });
+    }
+
+    function abrirMenu(boton) {
+        if (!menu) crearMenu();
+        if (!menu.hidden && origen === boton) { cerrarMenu(true); return; }
+        origen = boton;
+        menu.hidden = false;
+        const r = boton.getBoundingClientRect();
+        menu.style.top = Math.round(r.bottom + 8) + "px";
+        menu.style.right = Math.max(8, Math.round(window.innerWidth - r.right)) + "px";
+        actualizarBoton();
+        const actual = menu.querySelector('[data-lang="' + idioma + '"]');
+        if (actual) actual.focus();
+    }
+
     function cambiar(nuevo) {
-        if (nuevo !== "es" && nuevo !== "en") return;
+        if (nuevo !== "es" && nuevo !== "en" && nuevo !== "pt") return;
         idioma = nuevo;
         try { localStorage.setItem(CLAVE, nuevo); } catch (e) { /* sin almacenamiento */ }
         aplicarTodo();
@@ -535,7 +617,7 @@
 
     function iniciar() {
         botones = [...document.querySelectorAll("[data-idioma-boton]")];
-        for (const b of botones) b.addEventListener("click", () => cambiar(idioma === "es" ? "en" : "es"));
+        for (const b of botones) b.addEventListener("click", () => abrirMenu(b));
         observador.observe(document.body, {
             childList: true, subtree: true, characterData: true,
             attributes: true, attributeFilter: ATRIBUTOS
@@ -545,9 +627,9 @@
 
     window.GP_IDIOMA = {
         actual: () => idioma,
-        locale: () => (idioma === "en" ? "en-US" : "es-PE"),
+        locale: () => (idioma === "en" ? "en-US" : idioma === "pt" ? "pt-BR" : "es-PE"),
         cambiar,
-        traducir: (t) => (idioma === "en" ? (traducir(t) || t) : t)
+        traducir: (t) => (idioma !== "es" ? (traducir(t) || t) : t)
     };
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
