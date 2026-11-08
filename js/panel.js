@@ -273,7 +273,7 @@
         const { lo, hi, paso } = escala(Math.min(0, ...valores), Math.max(0, ...valores));
         const etiquetas = [];
         for (let v = lo; v <= hi + paso / 2; v += paso) etiquetas.push(monedaCorta(v, codigo));
-        const izq = Math.ceil(Math.max(...etiquetas.map((t) => t.length)) * 6.4) + 16;
+        const izq = Math.ceil(Math.max(...etiquetas.map((t) => t.length)) * 9.6) + 20;
         const y = (v) => arr + ((hi - v) / (hi - lo)) * (H - arr - aba);
         const n = items.length;
         const banda = (W - izq - der) / n;
