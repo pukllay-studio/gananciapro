@@ -126,7 +126,7 @@
                 tarjeta.classList.add("enciende");
                 luz.disconnect();
             }
-        }, { threshold: 0.25 });
+        }, { threshold: 0.6 });
         luz.observe(tarjeta);
     }
 })();

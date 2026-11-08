@@ -367,16 +367,22 @@ body[data-sesion="no"] .marca .marca-nombre { color: var(--cab-texto); }
 /* ---------- Tarjeta de acceso que se enciende (solo transform, opacidad y un halo) ---------- */
 body[data-sesion="no"] .acceso-tarjeta { position: relative; isolation: isolate; animation: none; }
 body[data-sesion="no"] .acceso-tarjeta::before {
-    content: ""; position: absolute; inset: -14%; z-index: -1; border-radius: 50%; pointer-events: none;
-    background: radial-gradient(closest-side, rgba(95, 214, 143, 0.55), rgba(95, 214, 143, 0) 70%);
+    content: ""; position: absolute; inset: -30%; z-index: -1; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(closest-side, rgba(31, 160, 85, 0.75), rgba(31, 160, 85, 0) 70%);
     opacity: 0; transform: scale(0.6);
 }
-body[data-sesion="no"] .acceso-tarjeta.lista { opacity: 0; transform: translateY(28px) scale(0.97); }
+body[data-sesion="no"] .acceso-tarjeta.lista { opacity: 0; transform: translateY(60px) scale(0.94); }
 body[data-sesion="no"] .acceso-tarjeta.lista > * { opacity: 0; transform: translateY(14px); }
 body[data-sesion="no"] .acceso-tarjeta.enciende {
-    opacity: 1; transform: none; transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 1; transform: none; transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
-body[data-sesion="no"] .acceso-tarjeta.enciende::before { animation: gp-halo 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
+body[data-sesion="no"] .acceso-tarjeta.enciende::before { animation: gp-halo 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both, gp-respira 3.2s ease-in-out 1.9s infinite alternate; }
+body[data-sesion="no"] .acceso-tarjeta.enciende { animation: gp-anillo 1.5s ease-out 0.2s 2; }
+@keyframes gp-anillo {
+    0% { box-shadow: 0 0 0 0 rgba(31, 160, 85, 0.55); }
+    100% { box-shadow: 0 0 0 46px rgba(31, 160, 85, 0); }
+}
+@keyframes gp-respira { from { opacity: 0.45; transform: scale(1); } to { opacity: 0.75; transform: scale(1.05); } }
 body[data-sesion="no"] .acceso-tarjeta.enciende > * {
     opacity: 1; transform: none; transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -386,12 +392,13 @@ body[data-sesion="no"] .acceso-tarjeta.enciende > :nth-child(4) { transition-del
 body[data-sesion="no"] .acceso-tarjeta.enciende > :nth-child(5) { transition-delay: 0.45s; }
 body[data-sesion="no"] .acceso-tarjeta.enciende > :nth-child(n+6) { transition-delay: 0.55s; }
 @keyframes gp-halo {
-    0% { opacity: 0; transform: scale(0.6); }
+    0% { opacity: 0; transform: scale(0.5); }
     35% { opacity: 1; transform: scale(1); }
-    100% { opacity: 0.35; transform: scale(1.06); }
+    100% { opacity: 0.55; transform: scale(1.04); }
 }
 @media (prefers-reduced-motion: reduce) {
     body[data-sesion="no"] .acceso-tarjeta.lista,
     body[data-sesion="no"] .acceso-tarjeta.lista > * { opacity: 1; transform: none; }
     body[data-sesion="no"] .acceso-tarjeta::before { display: none; }
+    body[data-sesion="no"] .acceso-tarjeta.enciende { animation: none; }
 }
