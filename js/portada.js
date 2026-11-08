@@ -121,12 +121,14 @@
     const tarjeta = document.querySelector("body[data-sesion=\"no\"] .acceso-tarjeta");
     if (tarjeta) {
         tarjeta.classList.add("lista");
+        const encender = () => { tarjeta.classList.add("enciende"); luz.disconnect(); };
         const luz = new IntersectionObserver((entradas) => {
-            if (entradas.some((e) => e.isIntersecting)) {
-                tarjeta.classList.add("enciende");
-                luz.disconnect();
-            }
-        }, { threshold: 0.6 });
+            if (entradas.some((e) => e.isIntersecting)) encender();
+        }, { threshold: 0.08 });
         luz.observe(tarjeta);
+        /* Si alguien pulsa "Empezar gratis" / "Iniciar sesión", se enciende de inmediato */
+        document.querySelectorAll("[data-cta]").forEach((b) => b.addEventListener("click", encender));
+        /* Seguro: nunca debe quedar invisible */
+        setTimeout(() => { if (!tarjeta.classList.contains("enciende")) encender(); }, 6000);
     }
 })();
