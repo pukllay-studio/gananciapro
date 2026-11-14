@@ -1,0 +1,52 @@
+/* Páginas de guía de GananciaPro: lectura clara, letra grande, sin scripts. */
+:root {
+    --fondo: #eef1f5; --hoja: #ffffff; --tinta: #0b1220; --suave: #44505f; --linea: #d5dce6;
+    --verde: #17764d; --verde-fuerte: #0f5c3b; --sobre-verde: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+    :root { --fondo: #0b1410; --hoja: #14201a; --tinta: #f1f6f3; --suave: #b6c4bb; --linea: #2f4438; --verde: #5fd69a; --verde-fuerte: #86e6b5; --sobre-verde: #062014; }
+}
+* { box-sizing: border-box; }
+html { font-size: 112.5%; -webkit-text-size-adjust: 100%; }
+body {
+    margin: 0; background: var(--fondo); color: var(--tinta);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.65;
+}
+a { color: var(--verde); text-underline-offset: 3px; }
+a:hover { color: var(--verde-fuerte); }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; border-radius: 6px; }
+.g-cab {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 14px max(16px, calc((100% - 760px) / 2)); background: var(--hoja); border-bottom: 1px solid var(--linea);
+}
+.g-marca { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.15rem; color: var(--tinta); text-decoration: none; }
+.g-marca b { color: var(--verde); }
+.g-marca img { border-radius: 9px; }
+.g-main { max-width: 760px; margin: 0 auto; padding: 28px 16px 56px; }
+.g-migas { font-size: 0.85rem; color: var(--suave); margin-bottom: 18px; overflow-wrap: anywhere; }
+.g-migas a { color: var(--suave); }
+h1 { font-size: clamp(1.9rem, 5.2vw, 2.7rem); line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 16px; text-wrap: balance; }
+h2 { font-size: 1.35rem; line-height: 1.25; margin: 40px 0 10px; text-wrap: balance; }
+p { margin: 0 0 14px; }
+.g-lead { font-size: 1.2rem; color: var(--suave); }
+ul { margin: 0 0 14px; padding-left: 1.2em; }
+li { margin-bottom: 8px; }
+.g-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin: 22px 0 6px; }
+.g-cta span { color: var(--suave); font-size: 0.92rem; }
+.g-cta-fin { margin-top: 36px; padding: 22px; background: var(--hoja); border: 1px solid var(--linea); border-radius: 16px; }
+.g-boton {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px;
+    background: var(--verde); color: var(--sobre-verde); font-weight: 700; text-decoration: none; border-radius: 999px;
+}
+.g-boton:hover { background: var(--verde-fuerte); color: var(--sobre-verde); }
+.g-boton-chico { min-height: 44px; padding: 0 16px; font-size: 0.9rem; white-space: nowrap; }
+.g-faq { background: var(--hoja); border: 1px solid var(--linea); border-radius: 12px; padding: 0 16px; margin-bottom: 10px; }
+.g-faq summary { cursor: pointer; font-weight: 700; padding: 14px 0; min-height: 48px; }
+.g-faq p { margin: 0 0 14px; color: var(--suave); }
+.g-enlaces { list-style: none; padding: 0; }
+.g-enlaces li { border-bottom: 1px solid var(--linea); margin: 0; }
+.g-enlaces a { display: block; padding: 13px 0; font-weight: 600; }
+.g-pie { border-top: 1px solid var(--linea); padding: 22px 16px 34px; text-align: center; color: var(--suave); font-size: 0.88rem; }
+.g-pie p { margin: 0 0 6px; }
+@media (max-width: 480px) { .g-marca span { font-size: 1rem; } .g-boton-chico { padding: 0 12px; font-size: 0.82rem; } }
