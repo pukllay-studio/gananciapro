@@ -494,6 +494,7 @@
         [/^Margen (.+)$/, (m) => `利润率 ${m[1]}`],
         [/^A (\d+) productos? vendidos? le falta el costo\. Agrégalo en Almacén para una ganancia exacta\.$/, (m) => `${m[1]} 件已售商品缺少成本。请在库存中补充，以获得准确的利润。`],
         [/^(\d+) variantes?(?: · (\d+) agotadas?)?$/, (m) => `${m[1]} 个变体` + (m[2] ? ` · ${m[2]} 个已售罄` : "")],
+        [/^Mostrando (\d+) de (\d+) operaci(?:ón|ones)(?: \(filtradas de (\d+)\))?\.$/, (m) => `显示 ${m[1]} / ${m[2]} 笔操作` + (m[3] ? `（共 ${m[3]} 笔中筛选）` : "") + "。"],
         [/^Mostrando (\d+) de (\d+) productos?\.$/, (m) => `显示 ${m[1]} / ${m[2]} 件商品。`],
         [/^Mostrando (\d+) (?:movimientos?)( \(hay más\))?\.$/, (m) => `显示 ${m[1]} 条变动${m[2] ? "（还有更多）" : ""}。`],
         [/^Ver más \((\d+) restantes\)$/, (m) => `查看更多（还剩 ${m[1]} 条）`],
