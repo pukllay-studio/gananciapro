@@ -1,0 +1,28 @@
+# GananciaPro
+
+> GananciaPro es una app web para pequeños negocios que lleva en un solo lugar los ingresos, los gastos y el almacén (inventario). Cada venta descuenta el stock y suma el ingreso, así el dueño ve su ganancia real del día, la semana o el mes.
+
+- Sitio: https://gananciapro.app
+- Precio: 14 días gratis sin tarjeta; luego US$ 9 al mes. Programa para PC (Windows y Mac) con pago único de US$ 135 que guarda los datos en la computadora y funciona sin internet.
+- Idiomas: español, inglés, portugués, francés y chino.
+- Para quién: tiendas de ropa y calzado, bodegas, minimarkets, venta por catálogo y emprendimientos que venden por WhatsApp o redes. Hecho en Perú, sirve en cualquier país y moneda.
+
+## Qué hace
+- Finanzas: ingresos y gastos con categoría y moneda, gastos fijos mensuales automáticos, historial con filtros, reporte del mes en PDF y exportación CSV.
+- Almacén: productos con talla, color, código y foto; entradas, ventas, pérdidas, daños, uso interno y ajustes; historial tipo kárdex con stock antes y después; aviso de stock bajo; lector de código de barras con la cámara.
+- Panel: ingresos, gastos, ganancia y margen del mes, gráfico por día, costo de lo vendido, productos más vendidos.
+- No emite boletas ni facturas.
+
+## Guías
+- [Programa de almacén para tu tienda o negocio](https://gananciapro.app/programa-de-almacen.html)
+- [Cómo llevar el control de almacén](https://gananciapro.app/control-de-almacen.html)
+- [Kárdex de almacén: qué es y cómo llevarlo](https://gananciapro.app/kardex-de-almacen.html)
+- [Sistema de inventario para bodega y minimarket](https://gananciapro.app/sistema-inventario-bodega.html)
+- [App de inventario en el celular](https://gananciapro.app/app-inventario-celular.html)
+- [Programa para controlar inventario y ventas](https://gananciapro.app/programa-control-inventario.html)
+- [App para llevar ingresos y gastos](https://gananciapro.app/app-ingresos-y-gastos.html)
+- [Cómo calcular la ganancia de tu negocio](https://gananciapro.app/como-calcular-ganancia.html)
+- [Alternativa a Excel para inventario](https://gananciapro.app/alternativa-excel-inventario.html)
+- [Control de stock para tienda de ropa por tallas](https://gananciapro.app/control-stock-tienda-ropa.html)
+- [Inventory and sales tracker for small business (English)](https://gananciapro.app/small-business-inventory-app.html)
+- [Controle de estoque e vendas (Português)](https://gananciapro.app/controle-de-estoque-e-vendas.html)
