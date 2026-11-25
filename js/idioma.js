@@ -328,6 +328,7 @@
         [/^Margen (.+)$/, (m) => `Margin ${m[1]}`],
         [/^A (\d+) productos? vendidos? le falta el costo\. Agrégalo en Almacén para una ganancia exacta\.$/, (m) => `${m[1]} sold product${m[1] === "1" ? " is" : "s are"} missing a cost. Add it in Inventory for an exact profit.`],
         [/^(\d+) variantes?(?: · (\d+) agotadas?)?$/, (m) => `${m[1]} variant${m[1] === "1" ? "" : "s"}` + (m[2] ? ` · ${m[2]} out of stock` : "")],
+        [/^Mostrando (\d+) de (\d+) operaci(?:ón|ones)(?: \(filtradas de (\d+)\))?\.$/, (m) => `Showing ${m[1]} of ${m[2]} ${m[2] === "1" ? "entry" : "entries"}` + (m[3] ? ` (filtered from ${m[3]})` : "") + "."],
         [/^Mostrando (\d+) de (\d+) productos?\.$/, (m) => `Showing ${m[1]} of ${m[2]} products.`],
         [/^Mostrando (\d+) (?:movimientos?)( \(hay más\))?\.$/, (m) => `Showing ${m[1]} movement${m[1] === "1" ? "" : "s"}${m[2] ? " (more available)" : ""}.`],
         [/^Ver más \((\d+) restantes\)$/, (m) => `See more (${m[1]} remaining)`],
@@ -369,14 +370,25 @@
     function normal(s) { return s.replace(/\s+/g, " ").trim(); }
 
     const paquete = () => (idioma === "pt" ? window.GP_PT : (window.GP_LANGS || {})[idioma]) || null;
-    const dic = () => (paquete() ? paquete().D : D);
+    /* Diccionarios con las claves normalizadas (sin espacios sobrantes), para que
+       un texto con espacio al inicio o al final también se encuentre. */
+    const normalizados = new Map();
+    function normalizar(obj) {
+        if (!normalizados.has(obj)) {
+            const n = Object.create(null);
+            for (const k of Object.keys(obj)) n[normal(k)] = obj[k];
+            normalizados.set(obj, n);
+        }
+        return normalizados.get(obj);
+    }
+    const dic = () => normalizar(paquete() ? paquete().D : D);
     const reglas = () => (paquete() ? paquete().R : R);
 
     function traducir(texto) {
         const t = normal(texto);
         if (!t) return null;
         const DD = dic();
-        if (Object.prototype.hasOwnProperty.call(DD, t)) return DD[t];
+        if (DD[t] !== undefined) return DD[t];
         for (const regla of reglas()) {
             const [re, fn, global] = regla;
             if (global) {
