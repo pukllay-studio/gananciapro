@@ -48,7 +48,7 @@
         };
         const pintar = () => {
             const g = numero(entra.value) - numero(sale.value);
-            const fmt = new Intl.NumberFormat(locale(), { maximumFractionDigits: 2 });
+            const fmt = new Intl.NumberFormat(locale(), { minimumFractionDigits: Number.isInteger(g) ? 0 : 2, maximumFractionDigits: 2 });
             salida.textContent = (g < 0 ? "−" : "") + "S/ " + fmt.format(Math.abs(g));
             etiqueta.textContent = g < 0 ? "Te falta" : "Te queda";
         };
