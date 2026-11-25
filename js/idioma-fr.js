@@ -494,6 +494,7 @@
         [/^Margen (.+)$/, (m) => `Marge ${m[1]}`],
         [/^A (\d+) productos? vendidos? le falta el costo\. Agrégalo en Almacén para una ganancia exacta\.$/, (m) => `Il manque le coût pour ${m[1]} produit${m[1] === "1" ? " vendu" : "s vendus"}. Ajoutez-le dans Stock pour un bénéfice exact.`],
         [/^(\d+) variantes?(?: · (\d+) agotadas?)?$/, (m) => `${m[1]} variante${m[1] === "1" ? "" : "s"}` + (m[2] ? ` · ${m[2]} épuisée${m[2] === "1" ? "" : "s"}` : "")],
+        [/^Mostrando (\d+) de (\d+) operaci(?:ón|ones)(?: \(filtradas de (\d+)\))?\.$/, (m) => `Affichage de ${m[1]} sur ${m[2]} opération${m[2] === "1" ? "" : "s"}` + (m[3] ? ` (filtrées sur ${m[3]})` : "") + "."],
         [/^Mostrando (\d+) de (\d+) productos?\.$/, (m) => `Affichage de ${m[1]} sur ${m[2]} produits.`],
         [/^Mostrando (\d+) (?:movimientos?)( \(hay más\))?\.$/, (m) => `Affichage de ${m[1]} mouvement${m[1] === "1" ? "" : "s"}${m[2] ? " (il y en a plus)" : ""}.`],
         [/^Ver más \((\d+) restantes\)$/, (m) => `Voir plus (${m[1]} restants)`],
