@@ -128,6 +128,28 @@ function cargarOperaciones() {
    cuenta mediante window.Nube. cargarOperaciones() se conserva solo para leer
    los datos antiguos de este navegador y ofrecer subirlos a la cuenta. */
 
+/* Lee un importe escrito a mano o venido de Excel: "1,500" y "1.500" son mil quinientos
+   (grupo de 3 cifras = miles); "12,5", "0,125" y "1240.50" son decimales; con los dos
+   separadores ("1,240.50" o "1.240,50") el último es el decimal. Devuelve NaN si no es número. */
+function leerImporte(txt) {
+    const s = String(txt).replace(/[^\d.,]/g, "");
+    if (!s) return NaN;
+    const ultimoPunto = s.lastIndexOf("."), ultimaComa = s.lastIndexOf(",");
+    let entero = s, decimal = "";
+    if (ultimoPunto !== -1 && ultimaComa !== -1) {
+        const i = Math.max(ultimoPunto, ultimaComa);
+        entero = s.slice(0, i); decimal = s.slice(i + 1);
+    } else if (ultimoPunto !== -1 || ultimaComa !== -1) {
+        const partes = s.split(ultimoPunto !== -1 ? "." : ",");
+        const miles = partes.length > 2 ||
+            (partes[1].length === 3 && /^[1-9]\d{0,2}$/.test(partes[0]));
+        if (!miles) { entero = partes[0]; decimal = partes[1]; }
+    }
+    entero = entero.replace(/[.,]/g, "");
+    if (/[.,]/.test(decimal)) return NaN;
+    return Number(decimal ? `${entero || "0"}.${decimal}` : entero);
+}
+
 function obtenerCampo(...selectores) {
     for (const selector of selectores) {
         const elemento = document.querySelector(selector);
@@ -859,12 +881,9 @@ function analizarCSV(texto) {
         const fecha = columnas[indiceFecha].trim();
         const tipo = columnas[indiceTipo].trim().toLowerCase();
         const descripcion = columnas[indiceDescripcion].trim();
-        const textoImporte = columnas[indiceImporte]
-            .trim()
-            .replace(/^'/, "")
-            .replace(",", ".");
-
-        const importe = Number(textoImporte);
+        // Antes: .replace(",", ".") convertía "1,250" (mil doscientos cincuenta, como lo
+        // guarda Excel en Perú) en 1.25 sin avisar.
+        const importe = leerImporte(columnas[indiceImporte].trim().replace(/^'/, ""));
 
         let moneda = MONEDA_PREDETERMINADA;
 

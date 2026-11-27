@@ -40,10 +40,30 @@
         const sale = $("calcGasto");
         const salida = $("calcGanancia");
         const etiqueta = $("calcEtiqueta");
+        /* Lee un importe escrito a mano o venido de Excel: "1,500" y "1.500" son mil quinientos
+           (grupo de 3 cifras = miles); "12,5", "0,125" y "1240.50" son decimales; con los dos
+           separadores ("1,240.50" o "1.240,50") el último es el decimal. Devuelve NaN si no es número. */
+        function leerImporte(txt) {
+            const s = String(txt).replace(/[^\d.,]/g, "");
+            if (!s) return NaN;
+            const ultimoPunto = s.lastIndexOf("."), ultimaComa = s.lastIndexOf(",");
+            let entero = s, decimal = "";
+            if (ultimoPunto !== -1 && ultimaComa !== -1) {
+                const i = Math.max(ultimoPunto, ultimaComa);
+                entero = s.slice(0, i); decimal = s.slice(i + 1);
+            } else if (ultimoPunto !== -1 || ultimaComa !== -1) {
+                const partes = s.split(ultimoPunto !== -1 ? "." : ",");
+                const miles = partes.length > 2 ||
+                    (partes[1].length === 3 && /^[1-9]\d{0,2}$/.test(partes[0]));
+                if (!miles) { entero = partes[0]; decimal = partes[1]; }
+            }
+            entero = entero.replace(/[.,]/g, "");
+            if (/[.,]/.test(decimal)) return NaN;
+            return Number(decimal ? `${entero || "0"}.${decimal}` : entero);
+        }
+        // Antes "1,500" y "1.500" daban S/ 1.50: el separador de miles se leía como decimal.
         const numero = (txt) => {
-            const limpio = String(txt).replace(/[^\d.,]/g, "").replace(/,/g, ".");
-            const partes = limpio.split(".");
-            const v = partes.length > 1 ? Number(partes.slice(0, -1).join("") + "." + partes[partes.length - 1]) : Number(limpio);
+            const v = leerImporte(txt);
             return Number.isFinite(v) ? Math.min(Math.max(v, 0), 999999999) : 0;
         };
         const pintar = () => {
