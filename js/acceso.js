@@ -559,6 +559,9 @@
             if (archivo.size > 5 * 1024 * 1024) throw new Error("El archivo es demasiado grande.");
             const datos = JSON.parse(await archivo.text());
             if (!datos || !Array.isArray(datos.operaciones)) throw new Error("Este archivo no es un respaldo de GananciaPro.");
+            /* Respaldo marcado incompleto al exportar: si faltan las operaciones, restaurar daría un "nada nuevo" engañoso */
+            const fallo = datos.completo === false && Array.isArray(datos.errores) && datos.errores.some((e) => e && e.tabla === "operaciones");
+            if (fallo) throw new Error("Este respaldo se descargó incompleto y no trae tus operaciones. Descarga uno nuevo.");
             if (datos.operaciones.length > MAX_RESTAURAR) throw new Error(`Máximo ${MAX_RESTAURAR} operaciones por restauración.`);
 
             const validas = datos.operaciones.map((o, i) => {
@@ -574,8 +577,14 @@
                 return { fecha: o.fecha, tipo: o.tipo, descripcion, importe, moneda: o.moneda, categoria: limpia(o.categoria) };
             });
 
-            const existentes = new Set((await Nube.listarOperaciones()).map(clave));
-            const nuevas = validas.filter((o) => !existentes.has(clave(o)));
+            /* Conteo por clave (no Set): dos gastos idénticos el mismo día son legítimos y no deben colapsar en uno */
+            const existentes = new Map();
+            for (const o of await Nube.listarOperaciones()) existentes.set(clave(o), (existentes.get(clave(o)) || 0) + 1);
+            const nuevas = validas.filter((o) => {
+                const k = clave(o), n = existentes.get(k) || 0;
+                if (n > 0) { existentes.set(k, n - 1); return false; }
+                return true;
+            });
             if (nuevas.length === 0) {
                 salida.textContent = "Tu respaldo no trae nada nuevo: todo ya estaba en tu cuenta.";
                 return;
