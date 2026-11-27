@@ -24,6 +24,16 @@
 
     /* ---------- Diccionario exacto (español → inglés) ---------- */
     const D = {
+"Estándar": "Standard",
+"US$ 9 al mes": "US$ 9 per month",
+"US$ 15 al mes": "US$ 15 per month",
+"Hasta 300 productos y 10 gastos fijos.": "Up to 300 products and 10 recurring expenses.",
+"Productos y gastos fijos sin límite.": "Unlimited products and recurring expenses.",
+"Elegir Premium": "Choose Premium",
+"Ya tienes este plan.": "You already have this plan.",
+"Mejorar a Premium": "Upgrade to Premium",
+"Ya tienes una suscripción. Cambia a Premium desde «Gestionar suscripción».": "You already have a subscription. Switch to Premium from “Manage subscription”.",
+
         // Portada y cabecera
         "Eliminar mi cuenta": "Delete my account",
         "14 días de prueba, sin tarjeta.": "14-day trial, no card needed.",
