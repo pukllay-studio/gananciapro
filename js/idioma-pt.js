@@ -4,6 +4,16 @@
    Lo carga idioma.js. Lo que no esté aquí se queda en español (nunca se rompe nada). */
 (function () {
     const D = {
+"Estándar": "Padrão",
+"US$ 9 al mes": "US$ 9 por mês",
+"US$ 15 al mes": "US$ 15 por mês",
+"Hasta 300 productos y 10 gastos fijos.": "Até 300 produtos e 10 despesas fixas.",
+"Productos y gastos fijos sin límite.": "Produtos e despesas fixas sem limite.",
+"Elegir Premium": "Escolher Premium",
+"Ya tienes este plan.": "Você já tem este plano.",
+"Mejorar a Premium": "Mudar para Premium",
+"Ya tienes una suscripción. Cambia a Premium desde «Gestionar suscripción».": "Você já tem uma assinatura. Mude para Premium em «Gerenciar assinatura».",
+
  "Eliminar mi cuenta": "Excluir minha conta",
  "14 días de prueba, sin tarjeta.": "14 dias de teste, sem cartão.",
  "14 días gratis, sin tarjeta. Cancela cuando quieras.": "14 dias grátis, sem cartão. Cancele quando quiser.",
