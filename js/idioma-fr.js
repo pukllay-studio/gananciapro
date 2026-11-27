@@ -3,6 +3,16 @@
 /* Francés de GananciaPro. Lo que falte se queda en español. */
 (function () {
     const D = {
+"Estándar": "Standard",
+"US$ 9 al mes": "9 US$ par mois",
+"US$ 15 al mes": "15 US$ par mois",
+"Hasta 300 productos y 10 gastos fijos.": "Jusqu'à 300 produits et 10 charges fixes.",
+"Productos y gastos fijos sin límite.": "Produits et charges fixes illimités.",
+"Elegir Premium": "Choisir Premium",
+"Ya tienes este plan.": "Vous avez déjà cette offre.",
+"Mejorar a Premium": "Passer à Premium",
+"Ya tienes una suscripción. Cambia a Premium desde «Gestionar suscripción».": "Vous avez déjà un abonnement. Passez à Premium depuis « Gérer l'abonnement ».",
+
 "Eliminar mi cuenta": "Supprimer mon compte",
 "14 días de prueba, sin tarjeta.": "14 jours d'essai, sans carte.",
 "14 días gratis, sin tarjeta. Cancela cuando quieras.": "14 jours gratuits, sans carte. Annulez quand vous voulez.",
