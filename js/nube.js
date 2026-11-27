@@ -231,7 +231,7 @@
         },
 
         /* Abre el pago de Polar: lo crea una función del servidor con la sesión del cliente */
-        async crearPago() {
+        async crearPago(plan) {
             const { data } = comprobar(await cliente.auth.getSession());
             const token = data.session?.access_token;
 
@@ -247,7 +247,7 @@
                         authorization: `Bearer ${token}`,
                         "content-type": "application/json"
                     },
-                    body: "{}"
+                    body: JSON.stringify({ plan: plan === "premium" ? "premium" : "estandar" })
                 });
             } catch (error) {
                 throw new Error("No hay conexión con el servidor. Revisa tu internet.");
@@ -256,7 +256,9 @@
             const resultado = await respuesta.json().catch(() => ({}));
 
             if (!respuesta.ok) {
-                throw new Error(resultado.mensaje || "No se pudo abrir el pago. Inténtalo de nuevo.");
+                const fallo = new Error(resultado.mensaje || "No se pudo abrir el pago. Inténtalo de nuevo.");
+                if (resultado.portal === true) fallo.portal = true;
+                throw fallo;
             }
 
             return resultado.url;
