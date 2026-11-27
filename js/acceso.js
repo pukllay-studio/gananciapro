@@ -274,6 +274,8 @@
             const info = await Nube.miPlan();
             if (!info || !NOMBRES_PLAN[info.plan]) throw new Error("sin plan");
             document.body.dataset.plan = info.plan;
+            const mejorar = $("btnMejorarPlan");
+            if (mejorar) mejorar.hidden = info.plan === "premium" || cfg.PAGOS_ACTIVOS !== true;
             if (texto) {
                 const almacen = info.variantes === 0
                     ? "sin almacén"
@@ -300,14 +302,15 @@
     const dlgPlanes = $("dlgPlanes");
 
     /* Pide al servidor el pago de ESTE cliente y lo abre (solo direcciones https de Polar) */
-    async function abrirPago() {
-        const boton = $("btnSuscribirme");
+    async function abrirPago(plan) {
+        const boton = plan === "premium" ? $("btnPremium") : $("btnSuscribirme");
+        const textoBoton = boton.textContent;
         boton.disabled = true;
         boton.textContent = "Abriendo pago…";
         $("textoEstadoPlan").textContent = "";
 
         try {
-            const url = await Nube.crearPago();
+            const url = await Nube.crearPago(plan);
             const destino = new URL(url);
 
             if (destino.protocol !== "https:" || !/(^|\.)polar\.sh$/.test(destino.hostname)) {
@@ -318,7 +321,9 @@
         } catch (error) {
             $("textoEstadoPlan").textContent = error.message;
             boton.disabled = false;
-            boton.textContent = "Suscribirme";
+            boton.textContent = textoBoton;
+            /* Quien ya paga Estándar cambia de plan en el portal de Polar */
+            if (error.portal && !$("btnGestionar").hidden) $("btnGestionar").click();
         }
     }
 
@@ -384,10 +389,17 @@
         const listo = /^https:\/\//.test(url);
         const boton = $("btnSuscribirme");
 
+        const premium = $("btnPremium");
+        const tienePremium = document.body.dataset.plan === "premium";
+        premium.hidden = cfg.PAGOS_ACTIVOS !== true;
+        premium.disabled = tienePremium;
+        premium.textContent = tienePremium ? "Ya tienes este plan." : "Elegir Premium";
+        premium.onclick = () => abrirPago("premium");
+
         if (cfg.PAGOS_ACTIVOS === true) {
             boton.disabled = false;
             boton.textContent = "Suscribirme";
-            boton.onclick = abrirPago;
+            boton.onclick = () => abrirPago("estandar");
         } else {
             boton.disabled = !listo;
             boton.textContent = listo ? "Suscribirme" : "Suscribirme (próximamente)";
@@ -398,6 +410,7 @@
     });
 
     $("btnCerrarPlanes").addEventListener("click", () => dlgPlanes.close());
+    $("btnMejorarPlan")?.addEventListener("click", () => $("btnVerPlanes").click());
 
     /* ----- Entrar a la app ----- */
     async function entrar(sesion) {
