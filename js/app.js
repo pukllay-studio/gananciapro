@@ -743,6 +743,13 @@ function protegerValorCSV(valor) {
     return `"${texto.replace(/"/g, '""')}"`;
 }
 
+/* Deshace la comilla que protegerValorCSV() antepone a textos que empiezan con = + - @ (para
+   que Excel no los ejecute como fórmula). Solo quita la comilla si detrás viene uno de esos
+   caracteres: una descripción que de verdad empieza con ' se respeta. */
+function quitarProteccionCSV(valor) {
+    return String(valor).replace(/^'(?=\s*[=+\-@\t\r])/, "");
+}
+
 function exportarCSV() {
     const encabezados = ["Fecha", "Tipo", "Descripción", "Moneda", "Importe", "Categoría"];
 
@@ -880,7 +887,8 @@ function analizarCSV(texto) {
 
         const fecha = columnas[indiceFecha].trim();
         const tipo = columnas[indiceTipo].trim().toLowerCase();
-        const descripcion = columnas[indiceDescripcion].trim();
+        // Antes la comilla de protección se quedaba pegada: "-Devolución" volvía como "'-Devolución".
+        const descripcion = quitarProteccionCSV(columnas[indiceDescripcion].trim()).trim();
         // Antes: .replace(",", ".") convertía "1,250" (mil doscientos cincuenta, como lo
         // guarda Excel en Perú) en 1.25 sin avisar.
         const importe = leerImporte(columnas[indiceImporte].trim().replace(/^'/, ""));
@@ -929,7 +937,7 @@ function analizarCSV(texto) {
             moneda,
             categoria: indiceCategoria === -1
                 ? ""
-                : limpiarCategoria(columnas[indiceCategoria].replace(/^'/, ""))
+                : limpiarCategoria(quitarProteccionCSV(columnas[indiceCategoria]))
         });
     }
 
