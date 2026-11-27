@@ -370,6 +370,24 @@
     function normal(s) { return s.replace(/\s+/g, " ").trim(); }
 
     const paquete = () => (idioma === "pt" ? window.GP_PT : (window.GP_LANGS || {})[idioma]) || null;
+    /* pt, fr y zh viven en su propio archivo y se cargan solo si se usan
+       (antes se descargaban siempre: ~43 KB gzip para quien usa español). */
+    const CON_ARCHIVO = ["pt", "fr", "zh"];
+    const listo = () => !CON_ARCHIVO.includes(idioma) || !!paquete();
+    const cargando = Object.create(null);
+    function cargarPaquete(cod) {
+        if (!CON_ARCHIVO.includes(cod)) return Promise.resolve();
+        if (!cargando[cod]) {
+            cargando[cod] = new Promise((ok) => {
+                const s = document.createElement("script");
+                s.src = "js/idioma-" + cod + ".js";
+                s.onload = ok;
+                s.onerror = () => { delete cargando[cod]; ok(); };
+                document.head.appendChild(s);
+            });
+        }
+        return cargando[cod];
+    }
     /* Diccionarios con las claves normalizadas (sin espacios sobrantes), para que
        un texto con espacio al inicio o al final también se encuentre. */
     const normalizados = new Map();
@@ -520,6 +538,12 @@
     }
 
     function aplicarTodo() {
+        if (!listo()) {
+            // Idioma en archivo aparte aún no descargado: se aplica al llegar.
+            const cod = idioma;
+            cargarPaquete(cod).then(() => { if (idioma === cod && listo()) aplicarTodo(); });
+            return;
+        }
         aplicando = true;
         try {
             raiz.setAttribute("lang", idioma);
@@ -532,7 +556,7 @@
     }
 
     const observador = new MutationObserver((cambios) => {
-        if (aplicando || idioma === "es") return;
+        if (aplicando || idioma === "es" || !listo()) return;
         aplicando = true;
         try {
             for (const c of cambios) {
@@ -549,9 +573,9 @@
     const confirmarOriginal = window.confirm.bind(window);
     const promptOriginal = window.prompt.bind(window);
     const alertaOriginal = window.alert.bind(window);
-    window.confirm = (m) => confirmarOriginal(idioma !== "es" ? traducirTextoLargo(String(m)) : m);
-    window.prompt = (m, d) => promptOriginal(idioma !== "es" ? traducirTextoLargo(String(m)) : m, d);
-    window.alert = (m) => alertaOriginal(idioma !== "es" ? traducirTextoLargo(String(m)) : m);
+    window.confirm = (m) => confirmarOriginal(idioma !== "es" && listo() ? traducirTextoLargo(String(m)) : m);
+    window.prompt = (m, d) => promptOriginal(idioma !== "es" && listo() ? traducirTextoLargo(String(m)) : m, d);
+    window.alert = (m) => alertaOriginal(idioma !== "es" && listo() ? traducirTextoLargo(String(m)) : m);
 
     /* ---------- Botón de idioma: abre un menú con los tres idiomas ---------- */
     const IDIOMAS = [["es", "Español"], ["en", "English"], ["pt", "Português"], ["fr", "Français"], ["zh", "中文"]];
@@ -651,7 +675,7 @@
         actual: () => idioma,
         locale: () => (idioma === "en" ? "en-US" : idioma === "pt" ? "pt-BR" : idioma === "fr" ? "fr-FR" : idioma === "zh" ? "zh-CN" : "es-PE"),
         cambiar,
-        traducir: (t) => (idioma !== "es" ? (traducir(t) || t) : t)
+        traducir: (t) => (idioma !== "es" && listo() ? (traducir(t) || t) : t)
     };
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
