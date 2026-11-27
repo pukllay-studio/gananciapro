@@ -760,6 +760,7 @@
         <section id="panelCuenta" class="panel-cuenta" aria-labelledby="tituloCuenta">
             <h2 id="tituloCuenta">Tu cuenta y tus datos</h2>
             <p id="textoPlan" class="nota" hidden></p>
+            <p><button type="button" id="btnMejorarPlan" class="btn-secundario btn-chico" hidden>Mejorar a Premium</button></p>
             <p class="nota">Puedes descargar una copia de tus datos o eliminar tu cuenta de forma definitiva. Más información en la <a href="privacidad.html">Política de privacidad</a>.</p>
             <div class="acciones">
                 <button type="button" id="btnGestionar" class="btn-secundario" hidden>Gestionar suscripción</button>
@@ -1040,13 +1041,25 @@
                 <h2 id="tituloDlgPlanes">Planes de GananciaPro</h2>
                 <ul class="lista-planes">
                     <li><strong>14 días de prueba gratis</strong>, sin tarjeta.</li>
-                    <li><strong>Después, suscripción mensual</strong> con todo incluido: finanzas, almacén, multimoneda y respaldos.</li>
                     <li>Si no te suscribes, <strong>tus datos siguen siendo tuyos</strong>: puedes verlos, descargarlos o eliminar tu cuenta cuando quieras.</li>
                 </ul>
+                <div class="planes-opciones">
+                    <div class="plan-opcion" data-plan-opcion="estandar">
+                        <h3>Estándar</h3>
+                        <p class="plan-precio">US$ 9 al mes</p>
+                        <p class="nota">Hasta 300 productos y 10 gastos fijos.</p>
+                        <button type="button" id="btnSuscribirme" disabled>Suscribirme (próximamente)</button>
+                    </div>
+                    <div class="plan-opcion plan-destacado" data-plan-opcion="premium">
+                        <h3>Premium</h3>
+                        <p class="plan-precio">US$ 15 al mes</p>
+                        <p class="nota">Productos y gastos fijos sin límite.</p>
+                        <button type="button" id="btnPremium" hidden>Elegir Premium</button>
+                    </div>
+                </div>
                 <p id="textoPrecio" class="nota"></p>
                 <p id="textoEstadoPlan" class="mensaje-acceso" role="status"></p>
                 <div class="acciones">
-                    <button type="button" id="btnSuscribirme" disabled>Suscribirme (próximamente)</button>
                     <button type="button" id="btnCerrarPlanes" class="btn-secundario">Cerrar</button>
                 </div>
             </div>
