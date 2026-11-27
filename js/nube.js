@@ -349,6 +349,7 @@
                         .select(columnasOp())
                         .order("fecha", { ascending: true })
                         .order("creado_en", { ascending: true })
+                        .order("id", { ascending: true }) /* desempate: una importación CSV comparte creado_en */
                         .range(desde, desde + TAMANO_PAGINA - 1)
                 );
 
@@ -683,19 +684,26 @@
         async exportarTodo() {
             const tablas = ["operaciones", "gastos_fijos", "almacen_categorias", "almacen_productos", "almacen_ventas",
                 "almacen_venta_detalles", "almacen_movimientos", "consentimientos", "suscripciones"];
-            const salida = { generado_en: new Date().toISOString(), version: 1 };
+            const LIMITE = 100000;
+            const salida = { generado_en: new Date().toISOString(), version: 1, completo: true, errores: [] };
 
             for (const tabla of tablas) {
                 const filas = [];
+                /* Orden estable: sin ORDER BY, .range() puede repetir u omitir filas entre páginas */
+                const orden = tabla === "suscripciones" ? "user_id" : "id";
                 try {
-                    for (let desde = 0; desde < 100000; desde += 1000) {
-                        const { data, error } = await cliente.from(tabla).select("*").range(desde, desde + 999);
+                    let desde = 0;
+                    for (; desde < LIMITE; desde += 1000) {
+                        const { data, error } = await cliente.from(tabla).select("*").order(orden).range(desde, desde + 999);
                         if (error) throw error;
                         filas.push(...data);
                         if (data.length < 1000) break;
                     }
+                    if (desde >= LIMITE) throw new Error(`más de ${LIMITE} filas`);
                 } catch (e) {
-                    /* Tabla no instalada o sin datos: se deja vacía */
+                    /* No se oculta: un respaldo con una tabla fallida queda marcado como incompleto */
+                    salida.completo = false;
+                    salida.errores.push({ tabla, mensaje: String((e && e.message) || e).slice(0, 200) });
                 }
                 salida[tabla] = filas;
             }

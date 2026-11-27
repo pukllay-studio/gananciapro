@@ -530,6 +530,9 @@
             enlace.click();
             enlace.remove();
             URL.revokeObjectURL(url);
+            if (datos.completo === false) {
+                $("mensajeCuenta").textContent = `Atención: el respaldo está incompleto (${datos.errores.map((e) => e.tabla).join(", ")}). Vuelve a intentarlo.`;
+            }
         } catch (error) {
             $("mensajeCuenta").textContent = `No se pudo descargar: ${error.message}`;
         } finally {
