@@ -3,6 +3,16 @@
 /* Chino simplificado de GananciaPro. Lo que falte se queda en español. */
 (function () {
     const D = {
+"Estándar": "标准版",
+"US$ 9 al mes": "每月 9 美元",
+"US$ 15 al mes": "每月 15 美元",
+"Hasta 300 productos y 10 gastos fijos.": "最多 300 件商品和 10 项固定支出。",
+"Productos y gastos fijos sin límite.": "商品和固定支出不限数量。",
+"Elegir Premium": "选择高级版",
+"Ya tienes este plan.": "你已经是这个套餐。",
+"Mejorar a Premium": "升级到高级版",
+"Ya tienes una suscripción. Cambia a Premium desde «Gestionar suscripción».": "你已有订阅。请在“管理订阅”中升级到高级版。",
+
 "Eliminar mi cuenta": "删除我的账户",
 "14 días de prueba, sin tarjeta.": "14天试用，无需银行卡。",
 "14 días gratis, sin tarjeta. Cancela cuando quieras.": "14天免费，无需银行卡。随时取消。",
